@@ -11,7 +11,7 @@ const app = express();
 const port = 3001;
 
 mongoose
-  .connect("mongodb+srv://votingverficationmachine:VVMvoting2030@cluster0.nr8cn.mongodb.net/VVMDB",{ serverSelectionTimeoutMS: 30000,})
+  .connect("mongodb+srv://votingverficationmachine:VVMvoting2030@cluster0.nr8cn.mongodb.net/VVMDB",{ serverSelectionTimeoutMS: 5000,socketTimeoutMS: 45000, keepAlive: true,})
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
