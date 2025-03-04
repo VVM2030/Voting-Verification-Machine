@@ -155,7 +155,7 @@ app.post("/register", async (req, res) => {
     if (!aadhar) return res.status(400).json({ message: "Invalid Aadhar Number" });
 
     if (aadhar.isMinor) {
-      return res.status(200).json({ redirect: "checkage.html" }); // Redirects to checkage.html if minor
+      return res.status(200).json({ redirect: "checkage.html" }); 
     }
 
     if (!/^0x[a-fA-F0-9]{40}$/.test(accountAddress)) {
@@ -175,7 +175,7 @@ app.post("/register", async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000);
 
     const mailOptions = {
-      from: "votingverficationmachine@gmail.com", // Ensure sender email is configured correctly
+      from: "votingverficationmachine@gmail.com", 
       to: email,
       subject: "OTP Verification",
       text: `Your OTP for voter registration is: ${otp}`,
