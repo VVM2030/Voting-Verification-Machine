@@ -86,8 +86,8 @@ DummyAadhar.insertMany([
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: "votingverficationmachine@gmail.com",
+    pass: "wsrt youa kxjv omet",
   },
   debug: true,
   logger: true, 
@@ -147,11 +147,15 @@ app.post("/register", async (req, res) => {
   try {
     const { aadharNo, accountAddress, email } = req.body;
 
+    if (!aadharNo || !accountAddress || !email) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
     const aadhar = await DummyAadhar.findOne({ aadharNo });
     if (!aadhar) return res.status(400).json({ message: "Invalid Aadhar Number" });
 
     if (aadhar.isMinor) {
-      return res.status(200).json({ redirect: "checkage.html" }); // This redirects to the checkage.html page
+      return res.status(200).json({ redirect: "checkage.html" }); // Redirects to checkage.html if minor
     }
 
     if (!/^0x[a-fA-F0-9]{40}$/.test(accountAddress)) {
@@ -163,19 +167,15 @@ app.post("/register", async (req, res) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const existingUser = await Registereduser.findOne({
-      $or: [{ aadharNo }],
-    });
+    const existingUser = await Registereduser.findOne({ aadharNo });
     if (existingUser) {
-      return res.status(400).json({
-        message: "Aadhar number is already registered.",
-      });
+      return res.status(400).json({ message: "Aadhar number is already registered." });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000);
 
     const mailOptions = {
-      from: EMAIL_USER,
+      from: "votingverficationmachine@gmail.com", // Ensure sender email is configured correctly
       to: email,
       subject: "OTP Verification",
       text: `Your OTP for voter registration is: ${otp}`,
@@ -183,15 +183,17 @@ app.post("/register", async (req, res) => {
 
     await transporter.sendMail(mailOptions);
 
-    const otpEntry = new Otp({ email, otp });
-    await otpEntry.save();
+    await Otp.findOneAndUpdate(
+      { email },
+      { otp, createdAt: new Date() },
+      { upsert: true }
+    );
 
     const registerUser = new Registereduser({
       email,
       aadharNo,
       accountAddress,
     });
-
     await registerUser.save();
 
     res.status(200).json({ message: "OTP sent. Please verify.", redirect: "emailverify.html" });
