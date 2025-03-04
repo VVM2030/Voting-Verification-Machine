@@ -242,7 +242,7 @@ app.post('/resend-otp', async (req, res) => {
     );
 
     const mailOptions = {
-      from: EMAIL_USER,
+      from: "votingverficationmachine@gmail.com",
       to: email,
       subject: 'New OTP for Verification',
       text: `Your new OTP is: ${newOtp}. It is valid for 1 minute.`,
