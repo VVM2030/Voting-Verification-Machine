@@ -290,7 +290,7 @@ app.post('/addCandidate', async (req, res) => {
   const { name, party, age, qualification } = req.body;
 
   if (age <= 18) {
-    return res.status(400).json({ message: "Age must be above 18 to add a candidate!" });
+    return res.status(400).json({ message: "Student not eligible for election" });
   }
 
   const newCandidate = new Candidate({ name, party, age, qualification });
