@@ -289,7 +289,7 @@ app.get("/getRegisteredUsers", async (req, res) => {
 app.post('/addCandidate', async (req, res) => {
   const { name, party, age, qualification } = req.body;
 
-  if (age <= 3) {
+  if (age >= 3) {
     return res.status(400).json({ message: "Student not eligible for election" });
   }
 
